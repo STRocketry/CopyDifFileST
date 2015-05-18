@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="CopyDifFileST:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/CopyDifFileST_jar</output-path>
+    <root id="archive" name="CopyDifFileST.jar">
+      <element id="module-output" name="CopyDifFileST" />
+    </root>
+  </artifact>
+</component>
