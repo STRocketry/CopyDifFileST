@@ -7,12 +7,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0c0fa839-2896-496c-b1da-7d8f9f4b0dba" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.gitignore" />
-      <change type="DELETED" beforePath="C:\Documents and Settings\Admin\IdeaProjects\CopyDifFileST\out\production\CopyDifFileST\MyFileFilter.class" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/CopyDifFileST_jar/CopyDifFileST.jar" afterPath="$PROJECT_DIR$/out/artifacts/CopyDifFileST_jar/CopyDifFileST.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/CopyDifFileST/MyFileFindVisitor.class" afterPath="$PROJECT_DIR$/out/production/CopyDifFileST/MyFileFindVisitor.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/CopyDifFileST/ProgramWindow$1.class" afterPath="$PROJECT_DIR$/out/production/CopyDifFileST/ProgramWindow$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/CopyDifFileST/ProgramWindow.class" afterPath="$PROJECT_DIR$/out/production/CopyDifFileST/ProgramWindow.class" />
+      <change type="DELETED" beforePath="C:\Documents and Settings\Admin\IdeaProjects\CopyDifFileST\out\artifacts\CopyDifFileST_jar\CopyDifFileST.jar" afterPath="" />
+      <change type="DELETED" beforePath="C:\Documents and Settings\Admin\IdeaProjects\CopyDifFileST\out\artifacts\CopyDifFilesST\CopyDifFilesST.jar" afterPath="" />
+      <change type="DELETED" beforePath="C:\Documents and Settings\Admin\IdeaProjects\CopyDifFileST\out\production\CopyDifFileST\CopyFiles.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Documents and Settings\Admin\IdeaProjects\CopyDifFileST\out\production\CopyDifFileST\META-INF\MANIFEST.MF" afterPath="" />
+      <change type="DELETED" beforePath="C:\Documents and Settings\Admin\IdeaProjects\CopyDifFileST\out\production\CopyDifFileST\Main.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Documents and Settings\Admin\IdeaProjects\CopyDifFileST\out\production\CopyDifFileST\MyFileFindVisitor.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Documents and Settings\Admin\IdeaProjects\CopyDifFileST\out\production\CopyDifFileST\ProgramWindow$1.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Documents and Settings\Admin\IdeaProjects\CopyDifFileST\out\production\CopyDifFileST\ProgramWindow.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Documents and Settings\Admin\IdeaProjects\CopyDifFileST\out\production\CopyDifFileST\StringField$1.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Documents and Settings\Admin\IdeaProjects\CopyDifFileST\out\production\CopyDifFileST\StringField.class" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <manually-removed-from-ignored>
@@ -433,7 +437,13 @@
       <option name="project" value="LOCAL" />
       <updated>1431971204390</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Remove out directory">
+      <created>1431978248343</created>
+      <option name="number" value="00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1431978248343</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -485,7 +495,8 @@
     <MESSAGE value="Test2" />
     <MESSAGE value="Delete class MyFileFilter" />
     <MESSAGE value="Some cleaning" />
-    <option name="LAST_COMMIT_MESSAGE" value="Some cleaning" />
+    <MESSAGE value="Remove out directory" />
+    <option name="LAST_COMMIT_MESSAGE" value="Remove out directory" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
