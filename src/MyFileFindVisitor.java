@@ -1,10 +1,7 @@
 /**
  * Created by Admin on 17.05.15.
  */
-import java.io.File;
-import java.io.IOException;
 import java.nio.file.*;
-import static java.nio.file.FileVisitResult.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 

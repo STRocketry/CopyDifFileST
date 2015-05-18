@@ -3,13 +3,10 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 
 /**
  * Created by Admin on 16.04.15.
@@ -30,7 +27,7 @@ public class ProgramWindow extends JFrame
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         // Настраиваем первую горизонтальную панель (для ввода расширения файла)
         Box box1 = Box.createHorizontalBox();
-        JLabel extensionLabel = new JLabel("Input extension:");
+        JLabel extensionLabel = new JLabel("Extension:");
         JTextField extensionField = new JTextField(15);
         box1.add(extensionLabel);
         box1.add(Box.createHorizontalStrut(6));
@@ -77,7 +74,6 @@ public class ProgramWindow extends JFrame
         pack(); //Автоматически устанавливает предпочтительный размер
         setResizable(false); //запретить окну изменять свои размеры
 
-        String extension;
 
         extField = new StringField(extensionField, this);
         fromDir = new StringField(dirOldField, this);
