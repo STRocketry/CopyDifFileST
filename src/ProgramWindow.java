@@ -60,7 +60,7 @@ public class ProgramWindow extends JFrame
         // Уточняем размеры компонентов
         extensionLabel.setPreferredSize(sourceLabel.getPreferredSize());
         // Размещаем четыре горизонтальные панели на одной вертикальной
-        Box mainBox = Box.createVerticalBox();
+        final Box mainBox = Box.createVerticalBox();
         mainBox.setBorder(new EmptyBorder(12,12,12,12));
         mainBox.add(box1);
         mainBox.add(Box.createVerticalStrut(12));
@@ -72,7 +72,7 @@ public class ProgramWindow extends JFrame
         setContentPane(mainBox);
        // setSize(250, 100); //Ручная установка размера окна
         pack(); //Автоматически устанавливает предпочтительный размер
-        setResizable(false); //запретить окну изменять свои размеры
+        setResizable(true); //запретить окну изменять свои размеры
 
 
         extField = new StringField(extensionField, this);
@@ -100,7 +100,8 @@ public class ProgramWindow extends JFrame
                 {
                     System.out.println(p.getFileName()); //выводим копируемый файл в консоль для отладки
                     copyFileLabel.setText("Copy: " + p.getFileName()); //НЕ РАБОТАЕ!!!! ???
-                    new CopyFiles(p.toAbsolutePath().toString(), toDir.getValue() + "Копия-" + p.getFileName());
+                    copyFileLabel.paintImmediately(copyFileLabel.getVisibleRect());
+                    new CopyFiles(p.toAbsolutePath().toString(), toDir.getValue() + "/Копия-" + p.getFileName());
                     copyFileLabel.setText("Ready");
                 }
 
