@@ -9,6 +9,12 @@ class MyFileFindVisitor extends SimpleFileVisitor<Path> {
     private PathMatcher matcher;
     private ArrayList<Path> arrayFilesCopy;
 
+    public int getArrayFilesCopySize() {
+        return arrayFilesCopy.size();
+    }
+
+
+
     public MyFileFindVisitor(String pattern) {
         arrayFilesCopy = new ArrayList<Path>();
         try {
