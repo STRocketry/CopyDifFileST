@@ -1,7 +1,7 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.lang.NullPointerException;
 
 /**
  * Created by Admin on 10.05.15.
@@ -24,6 +24,7 @@ public class StringField {
                     public void actionPerformed(ActionEvent evt) //обработчик лисинера
                     {
                         value = jTextField.getText();
+                        jTextField.setBackground(new Color(0x87AEC8)); //меняем цвет если внесли данные
                         System.out.println(value);
                         programWindow.setCopyButtonEnabled();
                     }
@@ -41,5 +42,6 @@ public class StringField {
 
     public void clear() {
         jTextField.setText(null);
+        jTextField.setBackground(new Color(0xFFFFFF)); //меняем цвет когда очистили поле
     }
 }

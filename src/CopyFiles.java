@@ -18,6 +18,7 @@ public class CopyFiles
         }
         catch (IOException e) {
             e.printStackTrace();
+            System.out.println("Can't copy " + pathSource);
         }
 
         System.out.println(pathDest);
