@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -21,9 +22,9 @@ public class ProgramWindow extends JFrame
     private JLabel processLabel;
     private JButton copy;
     private JButton cancel;
-    private JProgressBar progressBar1;
+    private JProgressBar progressBar;
     private int processed;
-    private boolean flag = false;
+    private Thread thread;
 
     ProgramWindow() {
         super("Copy different files ST");
@@ -62,11 +63,11 @@ public class ProgramWindow extends JFrame
         box4.add(Box.createHorizontalGlue());
 
         Box box5 = Box.createHorizontalBox();
-        progressBar1 = new JProgressBar(0, 100);
-        progressBar1.setStringPainted(true);
-        progressBar1.setPreferredSize(new Dimension(318, 20));
+        progressBar = new JProgressBar(0, 100);
+        progressBar.setStringPainted(true);
+        progressBar.setPreferredSize(new Dimension(318, 20));
 
-        box5.add(progressBar1);
+        box5.add(progressBar);
         box5.add(Box.createHorizontalGlue());
 
         Box box6 = Box.createHorizontalBox();
@@ -79,7 +80,7 @@ public class ProgramWindow extends JFrame
         box6.add(Box.createHorizontalStrut(5));
         copy = new JButton("Copy");
         box6.add(copy);
-        box6.add(Box.createHorizontalStrut(10));
+        box6.add(Box.createHorizontalStrut(5));
         cancel = new JButton("Cancel");
         box6.add(cancel);
         box6.add(Box.createHorizontalGlue());
@@ -116,7 +117,10 @@ public class ProgramWindow extends JFrame
         cancel.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent event) {
-                flag = true;
+                thread.stop(); //пока так работает, с интерраптом не работает так как надо :( 10.06.15
+//                Thread.interrupted();
+                JOptionPane.showMessageDialog(progressBar, processed + " files copied successfully!", "INTERRUPTED", JOptionPane.WARNING_MESSAGE);
+                setInitialState();
             }
         });
 
@@ -124,7 +128,7 @@ public class ProgramWindow extends JFrame
 
             public void actionPerformed(ActionEvent event) {
 
-                Thread thread = new Thread() {
+                thread = new Thread() {
                     public void run() {
                         copyStart();
                     }
@@ -138,40 +142,66 @@ public class ProgramWindow extends JFrame
         copy.setEnabled(false);
 
         Path startPath = Paths.get(fromDir.getValue());
+
         MyFileFindVisitor myFileFindVisitor = new MyFileFindVisitor("glob:*." + extField.getValue());
         try {
             Files.walkFileTree(startPath, myFileFindVisitor);
             System.out.println("File search completed!");
+            if (myFileFindVisitor.getArrayFilesCopySize() == 0){
+                JOptionPane.showMessageDialog(progressBar, "Files with this extension does not exist!", "ERROR", JOptionPane.ERROR_MESSAGE);
+                setInitialState();
+                thread.stop();
+            }
 
-        } catch (IOException e) {
+        } catch (NoSuchFileException e) { //если не правильно ввели папку поиска
+            System.out.println("NoSuchFileException! " + e);
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(progressBar, "Directory From does not exist!", "ERROR", JOptionPane.ERROR_MESSAGE);
+            setInitialState();
+            thread.stop();
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
 
         processLabel.setText("Files (total/processed): " + myFileFindVisitor.getArrayFilesCopySize() + "/0");
-        progressBar1.setMaximum(myFileFindVisitor.getArrayFilesCopySize());
+        progressBar.setMaximum(myFileFindVisitor.getArrayFilesCopySize());
 
         cancel.setEnabled(true); //Кнопку отмены делаем активной
+//        System.out.println(thread.isInterrupted());
 
         for (Path p : myFileFindVisitor.getArray())//копируем каждый файл
         {
             System.out.println(p.getFileName()); //выводим копируемый файл в консоль для отладки
             copyFileLabel.setText("Copy: " + p.toAbsolutePath().toString());
 
-            new CopyFiles(p.toAbsolutePath().toString(), toDir.getValue() + "/Copy-" + p.getFileName());
-            processed++;
-            processLabel.setText("Files (total/processed): " + myFileFindVisitor.getArrayFilesCopySize() + "/" + processed);
-            progressBar1.setValue(processed);
-
-            if (flag){
-                flag = false;
-                break;
+            try {
+                //Копируем, к имени копируемого файла добавляем названия последнего каталога!
+                new CopyFiles(p.toAbsolutePath().toString(), toDir.getValue() + "/" + p.getName(p.getNameCount() - 2) + "__" + p.getFileName());
+            } catch (NoSuchFileException e) { //если не правильно ввели папку назначения
+                System.out.println("NoSuchFileException! " + e);
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(copy, "Directory TO does not exist!", "ERROR", JOptionPane.ERROR_MESSAGE);
+                setInitialState();
+                thread.stop();
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.out.println("Can't copy " + p.toAbsolutePath().toString());
             }
 
-        }
+            processed++;
+            processLabel.setText("Files (total/processed): " + myFileFindVisitor.getArrayFilesCopySize() + "/" + processed);
+            progressBar.setValue(processed);
 
+        }
+        JOptionPane.showMessageDialog(progressBar, processed + " files copied successfully!", "READY", JOptionPane.INFORMATION_MESSAGE);
+        setInitialState();
+    }
+
+    public void setInitialState() {
         processed = 0;
-        progressBar1.setValue(processed);
-        copyFileLabel.setText("Ready");
+        progressBar.setValue(processed);
+        copyFileLabel.setText("Copy");
         processLabel.setText("Files (total/processed): 0/0");
         cancel.setEnabled(false);
         //Очитска полей для нового ввода
@@ -185,5 +215,6 @@ public class ProgramWindow extends JFrame
         boolean anyUnread = !extField.isRead() || !fromDir.isRead() || !toDir.isRead();
         copy.setEnabled(!anyUnread); //Когда ввели все данные делаем кнопу активной
     }
+
 }
 

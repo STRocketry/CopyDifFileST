@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/CopyDifFileST.iml" filepath="$PROJECT_DIR$/CopyDifFileST.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MavenCDF/MavenCDF.iml" filepath="$PROJECT_DIR$/MavenCDF/MavenCDF.iml" />
     </modules>
   </component>
 </project>
