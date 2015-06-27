@@ -3,6 +3,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -14,10 +15,9 @@ import java.nio.file.Paths;
  */
 public class ProgramWindow extends JFrame
 {
-
-    private StringField extField;
-    private StringField fromDir;
-    private StringField toDir;
+    private JTextField fromDirField;
+    private JTextField toDirField;
+    private JComboBox combo;
     private JLabel copyFileLabel;
     private JLabel processLabel;
     private JButton copy;
@@ -29,36 +29,58 @@ public class ProgramWindow extends JFrame
     ProgramWindow() {
         super("Copy different files ST");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        JMenuBar menuBar = new JMenuBar();
+        JMenuItem help = new JMenuItem("How to use");
+        menuBar.add(help);
+
         // Настраиваем первую горизонтальную панель (для ввода расширения файла)
         Box box1 = Box.createHorizontalBox();
         JLabel extensionLabel = new JLabel("Extension:");
-        JTextField extensionField = new JTextField(15);
         box1.add(extensionLabel);
         box1.add(Box.createHorizontalStrut(6));
-        box1.add(extensionField);
-        box1.add(Box.createHorizontalStrut(200));
+        String[] extElements = new String[] {"mp3", "pdf", "avi", "jpg", "txt"};
+        combo = new JComboBox(extElements);
+        combo.setMaximumSize(new Dimension(20, 20));
+        combo.setEditable(true); // Позволяет ввести произвольны элемент
+        box1.add(combo);
+        box1.add(Box.createHorizontalStrut(190));
+        box1.add(Box.createHorizontalGlue());
 
         // Настраиваем вторую горизонтальную панель (для ввода пути каталога нахождения файлов)
         Box box2 = Box.createHorizontalBox();
-        JLabel sourceLabel = new JLabel("From:");
-        JTextField dirOldField = new JTextField(15);
-        box2.add(sourceLabel);
+        JLabel fromLabel = new JLabel("From:");
+        fromDirField = new JTextField(15);
+        fromDirField.setMaximumSize(new Dimension(310, 21));
+        JButton from = new JButton("...");
+        from.setMaximumSize(new Dimension(20, 20));
+        box2.add(fromLabel);
         box2.add(Box.createHorizontalStrut(6));
-        box2.add(dirOldField);
+        box2.add(fromDirField);
+        box2.add(Box.createHorizontalStrut(6));
+        box2.add(from);
+        box2.add(Box.createHorizontalGlue());
+
         // Настраиваем третью горизонтальную панель (для ввода пути каталога копирования файлов)
         Box box3 = Box.createHorizontalBox();
-        JLabel destLabel = new JLabel("To:");
-        JTextField dirNewField = new JTextField(15);
-        box3.add(destLabel);
+        JLabel toLabel = new JLabel("To:");
+        toDirField = new JTextField(15);
+        toDirField.setMaximumSize(fromDirField.getMinimumSize());
+        JButton to = new JButton("...");
+        to.setMaximumSize(new Dimension(20, 20));
+        box3.add(toLabel);
         box3.add(Box.createHorizontalStrut(6));
-        box3.add(dirNewField);
+        box3.add(toDirField);
+        box3.add(Box.createHorizontalStrut(6));
+        box3.add(to);
+        box3.add(Box.createHorizontalGlue());
 
         // Настраиваем четвертую горизонтальную панель
         Box box4 = Box.createHorizontalBox();
         copyFileLabel = new JLabel("Copy:");
         Font font = new Font("Verdana", Font.ITALIC, 9); //фонты для label
         copyFileLabel.setFont(font);
-        copyFileLabel.setPreferredSize(new Dimension(300, 10));
+        copyFileLabel.setPreferredSize(new Dimension(300, 12));
         box4.add(copyFileLabel);
         box4.add(Box.createHorizontalGlue());
 
@@ -66,12 +88,10 @@ public class ProgramWindow extends JFrame
         progressBar = new JProgressBar(0, 100);
         progressBar.setStringPainted(true);
         progressBar.setPreferredSize(new Dimension(318, 20));
-
         box5.add(progressBar);
         box5.add(Box.createHorizontalGlue());
 
         Box box6 = Box.createHorizontalBox();
-
         processLabel = new JLabel("Files (total/processed): 0/0");
         box6.add(processLabel);
         Font font2 = new Font("Verdana", Font.PLAIN, 9);
@@ -84,10 +104,10 @@ public class ProgramWindow extends JFrame
         cancel = new JButton("Cancel");
         box6.add(cancel);
         box6.add(Box.createHorizontalGlue());
-        copy.setEnabled(false); //Сразу сделали кнопку не активной, пока не ввели все данные
-        cancel.setEnabled(false);
+        copy.setEnabled(true);
+        cancel.setEnabled(false);//Сразу сделали кнопку не активной, пока не запустили процесс
 
-        // Размещаем четыре горизонтальные панели на одной вертикальной
+        // Размещаем горизонтальные панели на одной вертикальной
         final Box mainBox = Box.createVerticalBox();
         mainBox.setBorder(new EmptyBorder(12, 12, 12, 12));
         mainBox.add(box1);
@@ -102,17 +122,25 @@ public class ProgramWindow extends JFrame
         mainBox.add(Box.createVerticalStrut(12));
         mainBox.add(box6);
         setContentPane(mainBox);
-        setSize(350, 220); //Ручная установка размера окна
-        // pack(); //Автоматически устанавливает предпочтительный размер
+        setJMenuBar(menuBar);
+        setSize(350, 262); //Ручная установка размера окна
+//         pack(); //Автоматически устанавливает предпочтительный размер
         setResizable(false); //запретить окну изменять свои размеры
 
 
-        extField = new StringField(extensionField, this);
-        fromDir = new StringField(dirOldField, this);
-        toDir = new StringField(dirNewField, this);
-        fromDir.addListener();
-        extField.addListener();
-        toDir.addListener();
+        from.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent event) {
+                getFileChooser(fromDirField);
+            }
+        });
+
+        to.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent event) {
+                getFileChooser(toDirField);
+            }
+        });
 
         cancel.addActionListener(new ActionListener() {
 
@@ -127,23 +155,58 @@ public class ProgramWindow extends JFrame
         copy.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent event) {
+                if (combo.getSelectedItem().toString().length() == 0) {
+                    JOptionPane.showMessageDialog(progressBar, "<html>Field <i>Extension</i> is empty!", "ERROR", JOptionPane.ERROR_MESSAGE);
 
-                thread = new Thread() {
-                    public void run() {
-                        copyStart();
-                    }
-                };
-                thread.start();
+                } else   if (fromDirField.getText().length() == 0) {
+                    JOptionPane.showMessageDialog(progressBar, "<html>Field <i>FROM</i> is empty!", "ERROR", JOptionPane.ERROR_MESSAGE);
+
+                }else if (toDirField.getText().length() == 0) {
+                    JOptionPane.showMessageDialog(progressBar, "<html>Field <i>TO</i> is empty!", "ERROR", JOptionPane.ERROR_MESSAGE);
+                }
+                else {
+                    thread = new Thread() {
+                        public void run() {
+                            copyStart();
+                        }
+                    };
+                    thread.start();
+                }
+            }
+        });
+
+
+        help.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                JOptionPane.showMessageDialog(progressBar, "<html>Алгоритм использования: " +
+                                "<li>1. В списке <i>Extension</i> выбрать или ввести расширение без точки.</ul>" +
+                                "<li>2. В поле <i>From</i> выбрать или ввести каталог поиска файлов.  </ul>" +
+                                "<li>3. В поле <i>To</i> выбрать или ввести каталог куда копировать файлы.  </ul>" +
+                                "<li>4. Нажать кнопку <i>Copy</i>. </ul>" +
+                                "<li>5. При необходимости отмены процесса нажать <i>Cancel</i>. </ul>",
+                        "How to use", JOptionPane.INFORMATION_MESSAGE);
             }
         });
     }
 
+    private void getFileChooser(JTextField field) {
+        JFileChooser fileChooser = new JFileChooser("d:/");
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);// Указываем выбор только директории, а не файла!
+        int ret = fileChooser.showDialog(null, "Open directory");
+        if (ret == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            field.setText(file.getAbsolutePath());
+            System.out.println(file.getAbsolutePath());
+        }
+    }
+
     private void copyStart() {
         copy.setEnabled(false);
+        cancel.setEnabled(true); //Кнопку отмены делаем активной
 
-        Path startPath = Paths.get(fromDir.getValue());
+        Path startPath = Paths.get(fromDirField.getText());
 
-        MyFileFindVisitor myFileFindVisitor = new MyFileFindVisitor("glob:*." + extField.getValue());
+        MyFileFindVisitor myFileFindVisitor = new MyFileFindVisitor("glob:*." + combo.getSelectedItem()); //Проверка с выпадающим списокм
         try {
             Files.walkFileTree(startPath, myFileFindVisitor);
             System.out.println("File search completed!");
@@ -156,7 +219,7 @@ public class ProgramWindow extends JFrame
         } catch (NoSuchFileException e) { //если не правильно ввели папку поиска
             System.out.println("NoSuchFileException! " + e);
             e.printStackTrace();
-            JOptionPane.showMessageDialog(progressBar, "Directory From does not exist!", "ERROR", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(progressBar, "<html>Directory <i>FROM</i> does not exist!", "ERROR", JOptionPane.ERROR_MESSAGE);
             setInitialState();
             thread.stop();
         }
@@ -167,7 +230,7 @@ public class ProgramWindow extends JFrame
         processLabel.setText("Files (total/processed): " + myFileFindVisitor.getArrayFilesCopySize() + "/0");
         progressBar.setMaximum(myFileFindVisitor.getArrayFilesCopySize());
 
-        cancel.setEnabled(true); //Кнопку отмены делаем активной
+
 //        System.out.println(thread.isInterrupted());
 
         for (Path p : myFileFindVisitor.getArray())//копируем каждый файл
@@ -177,16 +240,18 @@ public class ProgramWindow extends JFrame
 
             try {
                 //Копируем, к имени копируемого файла добавляем названия последнего каталога!
-                new CopyFiles(p.toAbsolutePath().toString(), toDir.getValue() + "/" + p.getName(p.getNameCount() - 2) + "__" + p.getFileName());
+                new CopyFiles(p.toAbsolutePath().toString(), toDirField.getText() + "/" + p.getName(p.getNameCount() - 2) + "__" + p.getFileName());
             } catch (NoSuchFileException e) { //если не правильно ввели папку назначения
                 System.out.println("NoSuchFileException! " + e);
                 e.printStackTrace();
-                JOptionPane.showMessageDialog(copy, "Directory TO does not exist!", "ERROR", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(copy, "<html>Directory <i>TO</i> does not exist!", "ERROR", JOptionPane.ERROR_MESSAGE);
                 setInitialState();
                 thread.stop();
             } catch (IOException e) {
                 e.printStackTrace();
                 System.out.println("Can't copy " + p.toAbsolutePath().toString());
+                JOptionPane.showMessageDialog(copy, "Can't copy " + p.toAbsolutePath().toString(), "ERROR", JOptionPane.ERROR_MESSAGE);
+                processed--; //уменьшаем счетчик скопиованных файлов, так как не можем скопировать этот файл
             }
 
             processed++;
@@ -203,17 +268,11 @@ public class ProgramWindow extends JFrame
         progressBar.setValue(processed);
         copyFileLabel.setText("Copy");
         processLabel.setText("Files (total/processed): 0/0");
+        copy.setEnabled(true);
         cancel.setEnabled(false);
         //Очитска полей для нового ввода
-        extField.clear();
-        fromDir.clear();
-        toDir.clear();
-        setCopyButtonEnabled();
-    }
-
-    public void setCopyButtonEnabled() {
-        boolean anyUnread = !extField.isRead() || !fromDir.isRead() || !toDir.isRead();
-        copy.setEnabled(!anyUnread); //Когда ввели все данные делаем кнопу активной
+        fromDirField.setText(null);
+        toDirField.setText(null);
     }
 
 }

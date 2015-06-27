@@ -1,10 +1,6 @@
-import javax.swing.*;
 import java.io.IOException;
 import java.nio.file.*;
 
-/**
- * Created by Admin on 16.04.15.
- */
 public class CopyFiles
 {
     CopyFiles(String pathSrc, String pathDest) throws IOException

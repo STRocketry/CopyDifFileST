@@ -1,6 +1,3 @@
-/**
- * Created by Admin on 17.05.15.
- */
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
